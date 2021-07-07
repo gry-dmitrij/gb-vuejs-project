@@ -18,6 +18,7 @@
 import PaymentsDisplay from './components/PaymentsDisplay.vue';
 import AddPaymentForm from './components/AddPaymentForm';
 import CostButton from './components/CostButton';
+import { mapMutations } from 'vuex';
 
 export default {
   name: 'App',
@@ -33,9 +34,12 @@ export default {
     CostButton
   },
   created() {
-    this.paymentsList = this.fetchData();
+    this.setPaymentsList(this.fetchData());
   },
   methods: {
+    ...mapMutations({
+      setPaymentsList: 'payments/setPaymentsList',
+    }),
     addNewPayment(data) {
       this.paymentsList.push({
         value: data.amount,

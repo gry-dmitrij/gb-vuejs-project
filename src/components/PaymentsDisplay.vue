@@ -20,12 +20,19 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   props: {
-    items: {
-      type: Array,
-      default: () => [],
-    }
+    // items: {
+    //   type: Array,
+    //   default: () => [],
+    // }
+  },
+  computed: {
+    ...mapGetters({
+      items: 'payments/getPaymentsList',
+    })
   }
 }
 </script>

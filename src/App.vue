@@ -10,6 +10,7 @@
                         @addNewPayment="addNewPayment"></AddPaymentForm>
       </div>
       <PaymentsDisplay :items="paymentsList"></PaymentsDisplay>
+      <Pagination></Pagination>
     </main>
   </div>
 </template>
@@ -18,7 +19,8 @@
 import PaymentsDisplay from './components/PaymentsDisplay.vue';
 import AddPaymentForm from './components/AddPaymentForm';
 import CostButton from './components/CostButton';
-import { mapMutations } from 'vuex';
+import Pagination from './components/Pagination';
+import { mapMutations, mapActions } from 'vuex';
 
 export default {
   name: 'App',
@@ -31,14 +33,18 @@ export default {
   components: {
     PaymentsDisplay,
     AddPaymentForm,
-    CostButton
+    CostButton,
+    Pagination
   },
   created() {
-    this.setPaymentsList(this.fetchData());
+    this.loadData(0);
   },
   methods: {
     ...mapMutations({
       setPaymentsList: 'payments/setPaymentsList',
+    }),
+    ...mapActions({
+      loadData: 'payments/fetchData',
     }),
     addNewPayment(data) {
       this.paymentsList.push({

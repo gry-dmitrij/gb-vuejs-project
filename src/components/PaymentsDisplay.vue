@@ -23,15 +23,9 @@
 import { mapGetters } from 'vuex';
 
 export default {
-  props: {
-    // items: {
-    //   type: Array,
-    //   default: () => [],
-    // }
-  },
   computed: {
     ...mapGetters({
-      items: 'payments/getPaymentsList',
+      items: 'payments/getCurrentList',
     })
   }
 }

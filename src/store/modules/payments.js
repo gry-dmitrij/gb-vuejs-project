@@ -39,7 +39,11 @@ export default {
             }
         },
         addPayment(state, payment) {
-            state.paymentsList.push(payment);
+            if (state.paymentsList[state.paymentsList.length - 1].length >= state.amountOnPage) {
+                state.paymentsList.push([]);
+                state.pages++;
+            }
+            state.paymentsList[state.paymentsList.length - 1].push(payment);
         },
         setCurrentPage(state, page) {
             if (page < state.pages && page >= 0) {

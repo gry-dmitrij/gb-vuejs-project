@@ -29,6 +29,7 @@ export default {
             return state.paymentsList[state.currentPage];
         },
         getPagesCount: state => state.pages,
+        getCurrentPage: state => state.currentPage
     },
     mutations: {
         setPaymentsList(state, { page, list}) {

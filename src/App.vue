@@ -4,13 +4,15 @@
       <div class="title">My personal costs</div>
     </header>
     <main>
-      <CostButton @click="showPaymentForm = !showPaymentForm">Add new cost</CostButton>
-      <div class="widget-box">
-        <AddPaymentForm class="widget" v-show="showPaymentForm"
-                        @addNewPayment="addNewPayment"></AddPaymentForm>
+      <div class="left-box">
+        <CostButton class="button" @click="showPaymentForm = !showPaymentForm">Add new cost</CostButton>
+        <div class="widget-box">
+          <AddPaymentForm class="widget" v-show="showPaymentForm"
+                          @addNewPayment="addNewPayment"></AddPaymentForm>
+        </div>
+        <PaymentsDisplay :items="paymentsList"></PaymentsDisplay>
+        <Pagination></Pagination>
       </div>
-      <PaymentsDisplay :items="paymentsList"></PaymentsDisplay>
-      <Pagination></Pagination>
     </main>
   </div>
 </template>
@@ -85,6 +87,10 @@ export default {
   color: #2c3e50;
   margin-top: 20px;
 }
+.left-box{
+  display: flex;
+  flex-direction: column;
+}
 header{
   padding: 10px 0;
 }
@@ -106,5 +112,8 @@ main{
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+}
+.button{
+  align-self: flex-start;
 }
 </style>

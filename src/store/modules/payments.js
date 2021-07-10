@@ -25,6 +25,7 @@ export default {
             return state.paymentsList
                 .reduce((res, cur) => res + cur.value, 0);
         },
+        getAmountOnPage: state => state.amountOnPage,
         getCurrentList: state => {
             return state.paymentsList[state.currentPage];
         },

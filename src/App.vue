@@ -7,10 +7,10 @@
       <div class="left-box">
         <CostButton class="button" @click="showPaymentForm = !showPaymentForm">Add new cost</CostButton>
         <div class="widget-box">
-          <AddPaymentForm class="widget" v-show="showPaymentForm"
-                          @addNewPayment="addNewPayment"></AddPaymentForm>
+          <AddPaymentForm class="widget" v-show="showPaymentForm" :categories="getCategories"
+                          @addPayment="addNewPayment"></AddPaymentForm>
         </div>
-        <PaymentsDisplay :items="paymentsList"></PaymentsDisplay>
+        <PaymentsDisplay :list="currentList" :offset="currentPage * amountOnPage"></PaymentsDisplay>
         <Pagination></Pagination>
       </div>
     </main>
@@ -22,7 +22,7 @@ import PaymentsDisplay from './components/PaymentsDisplay.vue';
 import AddPaymentForm from './components/AddPaymentForm';
 import CostButton from './components/CostButton';
 import Pagination from './components/Pagination';
-import { mapMutations, mapActions } from 'vuex';
+import { mapMutations, mapActions, mapGetters } from 'vuex';
 
 export default {
   name: 'App',
@@ -40,40 +40,25 @@ export default {
   },
   created() {
     this.loadData(0);
+    this.loadCategories();
+  },
+  computed: {
+    ...mapGetters({
+      currentList: 'payments/getCurrentList',
+      getCategories: 'categories/getCategoryList',
+      amountOnPage: 'payments/getAmountOnPage',
+      currentPage: 'payments/getCurrentPage'
+    })
   },
   methods: {
     ...mapMutations({
-      setPaymentsList: 'payments/setPaymentsList',
+      addNewPayment: 'payments/addPayment'
     }),
     ...mapActions({
       loadData: 'payments/fetchData',
+      loadCategories: 'categories/loadCategories'
     }),
-    addNewPayment(data) {
-      this.paymentsList.push({
-        value: data.amount,
-        category: data.type,
-        date: data.date
-      });
-    },
-    fetchData() {
-      return [
-        {
-          date: '28.03.2020',
-          category: 'Food',
-          value: 169,
-        },
-        {
-          date: '24.03.2020',
-          category: 'Transport',
-          value: 360,
-        },
-        {
-          date: '24.03.2020',
-          category: 'Food',
-          value: 532,
-        },
-      ]
-    }
+
   }
 }
 </script>

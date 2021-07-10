@@ -8,8 +8,8 @@
         <th class="col col_value">Value</th>
       </thead>
       <tbody>
-        <tr class="row" v-for="(item, idx) in items" :key="idx">
-          <td class="cell">{{ idx + 1 }}</td>
+        <tr class="row" v-for="(item, idx) in list" :key="idx">
+          <td class="cell">{{ idx + 1 + offset}}</td>
           <td class="cell">{{ item.date }}</td>
           <td class="cell">{{ item.category }}</td>
           <td class="cell">{{ item.value }}</td>
@@ -20,14 +20,24 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-
 export default {
-  computed: {
-    ...mapGetters({
-      items: 'payments/getCurrentList',
-    })
-  }
+  props: {
+    list: {
+      type: Array,
+      default: () => [],
+      validator: (list) => {
+        return list.reduce((prev, item) => {
+          return prev && ('date' in item
+              && 'category' in item
+              && 'value' in item)
+        }, true) ;
+      }
+    },
+    offset: {
+      type: Number,
+      default: 0
+    }
+  },
 }
 </script>
 

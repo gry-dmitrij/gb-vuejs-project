@@ -1,9 +1,8 @@
 <template>
   <div class="wrapper">
-    <input type="text" placeholder="Amount" v-model="amount">
-<!--    <input type="text" placeholder="Type" v-model="type">-->
-    <select name="categories" v-model="type">
-      <option v-for="(option, idx) in getCategoryList" :key="idx" :value="option">{{ option }}</option>
+    <input type="text" placeholder="Amount" v-model="value">
+    <select name="categories" v-model="category">
+      <option v-for="(category, idx) in categories" :key="idx" :value="category">{{ category }}</option>
     </select>
     <input type="date" placeholder="Date" v-model="date">
     <CostButton class="button" @click="onSave">Add</CostButton>
@@ -12,39 +11,34 @@
 
 <script>
 import CostButton from './CostButton';
-import { mapMutations, mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'AddPaymentForm',
   components: {
     CostButton
   },
+  props: {
+    categories: {
+      type: Array,
+      default: () => []
+    },
+  },
   data() {
     return {
-      amount: '',
-      type: '',
+      value: '',
+      category: '',
       date: ''
     }
   },
-  computed: {
-    ...mapGetters({
-      getCategoryList: 'categories/getCategoryList'
-    })
-  },
   methods: {
-    ...mapMutations({
-      addPayment: 'payments/addPayment',
-    }),
-    ...mapActions({
-      loadCategories: 'categories/loadCategories'
-    }),
+
     onSave() {
       const data = {
-        value: +this.amount,
-        category: this.type,
+        value: +this.value,
+        category: this.category,
         date: this.parseDate(this.date || new Date())
       }
-      this.addPayment(data);
+      this.$emit('addPayment', data);
     },
     parseDate(date) {
       date = new Date(date);
@@ -54,11 +48,6 @@ export default {
     },
 
   },
-  mounted() {
-    if (!this.getCategoryList.length) {
-      this.loadCategories();
-    }
-  }
 }
 </script>
 

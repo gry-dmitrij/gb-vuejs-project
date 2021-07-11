@@ -22,6 +22,16 @@ export default {
       type: Array,
       default: () => []
     },
+    defaultValues: {
+      type: Object,
+      default: () => {
+        return {
+          value: '',
+          category: '',
+          date: ''
+        }
+      }
+    }
   },
   data() {
     return {
@@ -29,6 +39,10 @@ export default {
       category: '',
       date: ''
     }
+  },
+  mounted() {
+    this.value = this.defaultValues.value || '';
+    this.category = this.defaultValues.category || '';
   },
   methods: {
 

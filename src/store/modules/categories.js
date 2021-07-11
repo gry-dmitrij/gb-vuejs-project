@@ -18,7 +18,7 @@ export default {
         loadCategories({ commit }) {
             return new Promise(resolve => {
                 setTimeout(() => {
-                    resolve(['Food', 'Transport', 'Education', 'Sport']);
+                    resolve(['Food', 'Transport', 'Education', 'Sport', 'Entertainment']);
                 }, 0);
             })
                 .then(res => {

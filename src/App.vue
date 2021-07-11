@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="wrapper" >
-    <router-link to="/dashboard">Dashboard</router-link>
-    <router-link to="/about">About</router-link>
+    <router-link class="menu-link" to="/dashboard">Dashboard</router-link>
+    <router-link class="menu-link" to="/about">About</router-link>
     <router-view></router-view>
   </div>
 </template>
@@ -60,5 +60,9 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 20px;
+}
+.menu-link {
+  margin-right: 20px;
+
 }
 </style>

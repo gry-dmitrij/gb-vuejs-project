@@ -13,10 +13,12 @@ function parseDate(date) {
 export default {
     namespaced: true,
     state: {
-        paymentsList: [],
-        pages: getRandomIntInclusive(3, 7),
+        // paymentsList: [],
+        paymentsList: new Array(getRandomIntInclusive(5,70)),
         currentPage: 0,
-        amountOnPage: 10
+        amountOnPage: 10,
+        // pages: Math.floor(state.paymentsList.length / state.amountOnPage)
+        // pages: 0
     },
     getters: {
         getPaymentsList: state => state.paymentsList,
@@ -27,48 +29,78 @@ export default {
         },
         getAmountOnPage: state => state.amountOnPage,
         getCurrentList: state => {
-            return state.paymentsList[state.currentPage];
+            // return state.paymentsList[state.currentPage];
+            const start = state.currentPage * state.amountOnPage;
+            return state.paymentsList.slice(start, start + state.amountOnPage);
         },
-        getPagesCount: state => state.pages,
+        getPagesCount: state => Math.ceil(state.paymentsList.length / state.amountOnPage),
         getCurrentPage: state => state.currentPage
     },
     mutations: {
         setPaymentsList(state, { page, list}) {
-            if (page >= 0 && page < state.pages) {
-                state.paymentsList[page] = list;
-                state.paymentsList = [...state.paymentsList];
+            let i = state.amountOnPage * page;
+            for (let item of list) {
+                if (i >= state.paymentsList.length) break;
+
+                state.paymentsList[i] = item;
+                i++;
             }
+            state.paymentsList = [...state.paymentsList];
+
         },
         addPayment(state, payment) {
-            if (state.paymentsList[state.paymentsList.length - 1].length >= state.amountOnPage) {
-                // state.paymentsList.push([]);
-                state.pages++;
-                state.paymentsList[state.pages - 1] = [];
-            }
-            state.paymentsList[state.pages - 1].push(payment);
+            state.paymentsList.push(payment);
         },
         setCurrentPage(state, page) {
-            if (page < state.pages && page >= 0) {
+            if (page < Math.ceil(state.paymentsList.length / state.amountOnPage)
+                && page >= 0) {
                 state.currentPage = page;
             }
+        },
+        delPayment(state, idx) {
+            state.paymentsList.splice(idx, 1);
         }
     },
     actions: {
-        fetchData({ commit, state }, page) {
+        deletePayment({ commit, dispatch, state, getters}, { idx }) {
+            commit('delPayment', idx);
+            if (state.currentPage > getters.getPagesCount - 1
+                && state.currentPage > 0) {
+                state.currentPage--;
+            }
+            dispatch('fetchData', state.currentPage);
+        },
+        fetchData({ commit, state, getters }, page) {
             return new Promise((resolve, reject) => {
-                if (page > state.pages) {
+                if (page > getters.getPagesCount) {
                     reject('This page doesn\'t exist');
                     return;
                 }
                 commit('setCurrentPage', page);
-                if (state.paymentsList[page]) {
-                    resolve(state.paymentsList[page]);
+                let loaded = true;
+                const start = page * state.amountOnPage;
+                for (let i = start; i < start + state.amountOnPage; i++) {
+                    if (i >= state.paymentsList.length) break;
+
+                    if (!state.paymentsList[i]) {
+                       loaded = false;
+                       break;
+                    }
+                }
+                if (loaded) {
+                    resolve(getters.getCurrentList);
                     return;
                 }
                 setTimeout(() => {
                     const category = ['Food', 'Transport', 'Education', 'Sport'];
                     const list = [];
-                    for (let i = 0; i < state.amountOnPage; i++) {
+                    for (let i = start; i < start + state.amountOnPage; i++) {
+                        if (i >= state.paymentsList.length) break;
+                        if (state.paymentsList[i]){
+                            list.push(state.paymentsList[i]);
+                            continue;
+                        }
+
                         let day = getRandomIntInclusive(1, 31);
                         let month = getRandomIntInclusive(0, 11);
                         let year = getRandomIntInclusive(2000, 2021);

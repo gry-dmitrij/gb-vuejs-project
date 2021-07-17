@@ -18,11 +18,12 @@
 </template>
 
 <script>
-import PaymentsDisplay from "../components/PaymentsDisplay";
-import AddPaymentForm from "../components/AddPaymentForm";
-import CostButton from "../components/CostButton";
-import Pagination from "../components/Pagination";
-import { mapGetters, mapMutations} from "vuex";
+import PaymentsDisplay from '../components/PaymentsDisplay';
+import AddPaymentForm from '../components/AddPaymentForm';
+import CostButton from '../components/CostButton';
+import Pagination from '../components/Pagination';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
+import { events as paymentEvents} from '../components/PaymentsDisplay';
 
 export default {
   name: 'Dashboard',
@@ -39,6 +40,12 @@ export default {
       this.defaultValues.category = this.$route.params.category || '';
       this.defaultValues.value = this.$route.query.value || '';
     }
+  },
+  mounted() {
+    this.$contextMenu.EventBus.$on(paymentEvents.DELETE, this.deletePayment);
+  },
+  destroyed() {
+    this.$contextMenu.EventBus.$off(paymentEvents.DELETE, this.deletePayment);
   },
   components: {
     PaymentsDisplay,
@@ -58,6 +65,9 @@ export default {
     ...mapMutations({
       addNewPayment: 'payments/addPayment'
     }),
+    ...mapActions({
+      deletePayment: 'payments/deletePayment'
+    })
   }
 }
 </script>

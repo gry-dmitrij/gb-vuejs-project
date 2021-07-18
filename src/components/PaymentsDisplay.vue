@@ -14,7 +14,7 @@
           <td class="cell">{{ (item && item.category) ? item.category  : '' }}</td>
           <td class="cell">{{ (item && item.value) ? item.value : '' }}</td>
           <td class="cell">
-            <button class="menu-button" @click="showMenu(idx + offset, $event)">
+            <button class="menu-button" @click.stop="showMenu(idx + offset, $event)">
               <span class="menu-span"></span>
             </button>
           </td>

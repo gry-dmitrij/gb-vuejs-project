@@ -2,7 +2,7 @@
   <div v-if="showed" class="main">
     <ul class="wrapper">
       <li v-for="(item, idx) in list" :key="idx">
-        <a class="link" href="#" @click.prevent="click(item.event)">{{ item.name }}</a>
+        <a class="link" href="#" @click.prevent.stop="click(item.event)">{{ item.name }}</a>
       </li>
     </ul>
   </div>
@@ -42,7 +42,7 @@ export default {
       if (event) {
         this.$contextMenu.click(event, this.options);
       }
-      this.hide();
+      this.$contextMenu.hide()
     }
   }
 }

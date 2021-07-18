@@ -1,3 +1,4 @@
+import Vue from "vue";
 function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -27,6 +28,7 @@ export default {
             return state.paymentsList
                 .reduce((res, cur) => res + cur.value, 0);
         },
+        getPayment: state => index => state.paymentsList[index],
         getAmountOnPage: state => state.amountOnPage,
         getCurrentList: state => {
             // return state.paymentsList[state.currentPage];
@@ -50,6 +52,14 @@ export default {
         },
         addPayment(state, payment) {
             state.paymentsList.push(payment);
+        },
+        editPayment(state, data) {
+            const payment = {
+                value: data.value,
+                category: data.category,
+                date: data.date
+            }
+            Vue.set(state.paymentsList, data.index, payment);
         },
         setCurrentPage(state, page) {
             if (page < Math.ceil(state.paymentsList.length / state.amountOnPage)

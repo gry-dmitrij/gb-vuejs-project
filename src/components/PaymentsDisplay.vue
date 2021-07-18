@@ -13,7 +13,11 @@
           <td class="cell">{{ (item && item.date) ? item.date : '' }}</td>
           <td class="cell">{{ (item && item.category) ? item.category  : '' }}</td>
           <td class="cell">{{ (item && item.value) ? item.value : '' }}</td>
-          <td class="cell"><button @click="showMenu(idx + offset, $event)">Открыть</button></td>
+          <td class="cell">
+            <button class="menu-button" @click="showMenu(idx + offset, $event)">
+              <span class="menu-span"></span>
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -72,8 +76,8 @@ export default {
     showMenu(idx, event) {
       this.$contextMenu.show({idx});
       const rect = event.currentTarget.getBoundingClientRect();
-      this.styleObj.top = rect.bottom + 12 + 'px';
-      this.styleObj.left = rect.right + 'px';
+      this.styleObj.top = rect.bottom + 14 + 'px';
+      this.styleObj.left = rect.right + 8 + 'px';
     },
     editNote({ idx }) {
       this.$emit(EDIT, idx);
@@ -114,5 +118,33 @@ table {
   position: absolute;
   transform: translateX(-100%);
   top: 0;
+}
+.menu-span {
+  position: relative;
+  &, &:after, &:before{
+    width: 3px;
+    height: 3px;
+    display: block;
+    background: #000;
+    border-radius: 50%;
+  }
+  &:after, &:before {
+    content: '';
+    position: absolute;
+  }
+  &:after {
+    bottom: -6px;
+  }
+  &:before {
+    top: -6px;
+  }
+}
+.menu-button {
+  height: 18px;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  outline: none;
 }
 </style>

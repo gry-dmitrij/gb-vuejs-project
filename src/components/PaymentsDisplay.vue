@@ -21,7 +21,9 @@
         </tr>
       </tbody>
     </table>
-    <context-menu class="menu" :style="styleObj" :list="menuList"></context-menu>
+    <transition name="fade">
+      <context-menu class="menu" :style="styleObj" :list="menuList"></context-menu>
+    </transition>
   </div>
 </template>
 
@@ -146,5 +148,11 @@ table {
   background: transparent;
   border: none;
   outline: none;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .3s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 </style>

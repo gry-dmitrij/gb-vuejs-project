@@ -72,7 +72,7 @@ export default {
       }
       if (date) {
         let result = date.match(/(\d{1,2}).(\d{1,2}).(\d{4})/);
-        if (result.length > 3) {
+        if (result && result.length > 3) {
           this.date = `${result[3]}-${result[2]}-${result[1]}`
         }
       }

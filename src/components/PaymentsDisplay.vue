@@ -78,8 +78,8 @@ export default {
     showMenu(idx, event) {
       this.$contextMenu.show({idx});
       const rect = event.currentTarget.getBoundingClientRect();
-      this.styleObj.top = rect.bottom + 14 + 'px';
-      this.styleObj.left = rect.right + 8 + 'px';
+      this.styleObj.top = rect.bottom + 14 + window.pageYOffset + 'px';
+      this.styleObj.left = rect.right + 8 + window.pageXOffset + 'px';
     },
     editNote({ idx }) {
       this.$emit(EDIT, idx);

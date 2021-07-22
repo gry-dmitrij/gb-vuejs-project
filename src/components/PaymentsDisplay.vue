@@ -1,26 +1,24 @@
 <template>
   <div class="wrapper">
-    <table>
-      <thead class="row">
-        <th class="col col_number">#</th>
-        <th class="col col_date">Date</th>
-        <th class="col col_category">Category</th>
-        <th colspan="2" class="col col_value">Value</th>
-      </thead>
-      <tbody>
-        <tr class="row" v-for="(item, idx) in list" :key="idx">
-          <td class="cell">{{ idx + 1 + offset}}</td>
-          <td class="cell">{{ (item && item.date) ? item.date : '' }}</td>
-          <td class="cell">{{ (item && item.category) ? item.category  : '' }}</td>
-          <td class="cell">{{ (item && item.value) ? item.value : '' }}</td>
-          <td class="cell">
+    <v-container>
+      <v-row>
+        <v-col :cols="1">#</v-col>
+        <v-col :cols="4">Date</v-col>
+        <v-col :cols="4">Category</v-col>
+        <v-col :cols="2">Value</v-col>
+      </v-row>
+      <v-row v-for="(item, idx) in list" :key="idx">
+          <v-col :cols="1">{{ idx + 1 + offset}}</v-col>
+          <v-col :cols="4">{{ (item && item.date) ? item.date : '' }}</v-col>
+          <v-col :cols="4">{{ (item && item.category) ? item.category  : '' }}</v-col>
+          <v-col :cols="2">{{ (item && item.value) ? item.value : '' }}</v-col>
+          <v-col :cols="1">
             <button class="menu-button" @click.stop="showMenu(idx + offset, $event)">
               <span class="menu-span"></span>
             </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </v-col>
+      </v-row>
+    </v-container>
     <transition name="fade">
       <context-menu class="menu" :style="styleObj" :list="menuList"></context-menu>
     </transition>
@@ -77,9 +75,9 @@ export default {
   methods: {
     showMenu(idx, event) {
       this.$contextMenu.show({idx});
-      const rect = event.currentTarget.getBoundingClientRect();
-      this.styleObj.top = rect.bottom + 14 + window.pageYOffset + 'px';
-      this.styleObj.left = rect.right + 8 + window.pageXOffset + 'px';
+      const target = event.currentTarget;
+      this.styleObj.top = target.offsetTop + target.offsetHeight + 14 + 'px';
+      this.styleObj.left = target.offsetLeft + target.offsetWidth + 8 + 'px';
     },
     editNote({ idx }) {
       this.$emit(EDIT, idx);
@@ -93,26 +91,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-table {
-  border-collapse: collapse;
-  text-align: left;
-}
-.col {
-  min-width: 100px;
-  padding: 10px 0;
-  &_number{
-    min-width: 45px;
-  }
-  &_value {
-    min-width: 50px;
-  }
-  &_category {
-    min-width: 200px;
-  }
-}
-.cell {
-  padding: 10px 0;
-}
 .row {
   border-bottom: 1px solid #ddd;
 }

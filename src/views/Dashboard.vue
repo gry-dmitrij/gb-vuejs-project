@@ -1,19 +1,24 @@
 <template>
-  <div>
-    <header>
-      <div class="title">My personal costs</div>
-    </header>
-    <main>
-      <div class="left-box">
-        <CostButton class="button" @click.stop="btnAddClick">Add new cost</CostButton>
-        <div class="widget-box" @click.stop="">
-          <edit-cost-window class="widget" :categories="getCategories"></edit-cost-window>
-        </div>
-        <PaymentsDisplay :list="currentList" :offset="currentPage * amountOnPage"></PaymentsDisplay>
-        <Pagination></Pagination>
-      </div>
-    </main>
-  </div>
+  <v-container>
+    <v-row>
+      <v-col>
+        <header>
+          <div class="title">My personal costs</div>
+        </header>
+        <main>
+          <div class="left-box">
+            <CostButton class="button" @click.stop="btnAddClick">Add new cost</CostButton>
+            <div class="widget-box" @click.stop="">
+              <edit-cost-window class="widget" :categories="getCategories"></edit-cost-window>
+            </div>
+            <PaymentsDisplay :list="currentList"
+                             :offset="currentPage * amountOnPage"></PaymentsDisplay>
+            <Pagination></Pagination>
+          </div>
+        </main>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>

@@ -1,68 +1,68 @@
 <template>
-  <div id="app" class="wrapper" >
-    <router-link class="menu-link" to="/dashboard">Dashboard</router-link>
-    <router-link class="menu-link" to="/about">About</router-link>
-    <router-view></router-view>
-  </div>
+  <v-app>
+    <v-app-bar
+      app
+      color="primary"
+      dark
+    >
+      <div class="d-flex align-center">
+        <v-img
+          alt="Vuetify Logo"
+          class="shrink mr-2"
+          contain
+          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          transition="scale-transition"
+          width="40"
+        />
+
+        <v-img
+          alt="Vuetify Name"
+          class="shrink mt-1 hidden-sm-and-down"
+          contain
+          min-width="100"
+          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
+          width="100"
+        />
+      </div>
+
+      <v-spacer></v-spacer>
+
+      <v-btn
+        href="https://github.com/vuetifyjs/vuetify/releases/latest"
+        target="_blank"
+        text
+      >
+        <span class="mr-2">Latest Release</span>
+        <v-icon>mdi-open-in-new</v-icon>
+      </v-btn>
+    </v-app-bar>
+
+    <v-main>
+      <router-view/>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-// import PaymentsDisplay from './components/PaymentsDisplay.vue';
-// import AddPaymentForm from './components/AddPaymentForm';
-// import CostButton from './components/CostButton';
-// import Pagination from './components/Pagination';
-import { mapActions } from 'vuex';
+
+import {mapActions} from "vuex";
 
 export default {
   name: 'App',
-  data() {
-    return {
-      // paymentsList: [],
-      // showPaymentForm: false
-    };
-  },
-  components: {
-    // PaymentsDisplay,
-    // AddPaymentForm,
-    // CostButton,
-    // Pagination
-  },
+
+  data: () => ({
+    //
+  }),
   created() {
     this.loadData(0);
     this.loadCategories();
   },
-  // computed: {
-  //   ...mapGetters({
-  //     currentList: 'payments/getCurrentList',
-  //     getCategories: 'categories/getCategoryList',
-  //     amountOnPage: 'payments/getAmountOnPage',
-  //     currentPage: 'payments/getCurrentPage'
-  //   })
-  // },
   methods: {
-    // ...mapMutations({
-    //   addNewPayment: 'payments/addPayment'
-    // }),
     ...mapActions({
       loadData: 'payments/fetchData',
       loadCategories: 'categories/loadCategories'
     }),
 
   }
-}
+};
 </script>
-
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 20px;
-}
-.menu-link {
-  margin-right: 20px;
-
-}
-</style>

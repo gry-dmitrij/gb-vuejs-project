@@ -1,19 +1,27 @@
 <template>
-  <div>
-    <header>
-      <div class="title">My personal costs</div>
-    </header>
-    <main>
-      <div class="left-box">
-        <CostButton class="button" @click.stop="btnAddClick">Add new cost</CostButton>
-        <div class="widget-box" @click.stop="">
-          <edit-cost-window class="widget" :categories="getCategories"></edit-cost-window>
-        </div>
-        <PaymentsDisplay :list="currentList" :offset="currentPage * amountOnPage"></PaymentsDisplay>
-        <Pagination></Pagination>
-      </div>
-    </main>
-  </div>
+  <v-container>
+    <v-row>
+      <v-col :order="1" :order-md="0" :cols="12" :md="6">
+        <header>
+          <div class="title">My personal costs</div>
+        </header>
+        <main>
+          <div class="left-box">
+            <CostButton class="button" @click.stop="btnAddClick">Add new cost</CostButton>
+            <div class="widget-box" @click.stop="">
+              <edit-cost-window class="widget" :categories="getCategories"></edit-cost-window>
+            </div>
+            <PaymentsDisplay :list="currentList"
+                             :offset="currentPage * amountOnPage"></PaymentsDisplay>
+            <Pagination></Pagination>
+          </div>
+        </main>
+      </v-col>
+      <v-col :cols="12" :md="6">
+        <CircleChart ref="chart" :chart-data="chartData" :options="chartOptions"></CircleChart>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -23,6 +31,7 @@ import Pagination from '../components/Pagination';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { events as paymentEvents } from '../components/PaymentsDisplay';
 import { events as windowEvents } from '../plugins/EditCostWindow';
+import CircleChart from '../components/CircleChart';
 
 const EDIT_EVENT = 'edit-event';
 const ADD_EVENT = 'add-event';
@@ -35,12 +44,21 @@ export default {
       showPaymentForm: false,
       buttonAction: null,
       hideContextMenu: () => null,
-      hideModalWindow: () => null
+      hideModalWindow: () => null,
+      chartData: {},
+      chartOptions: {
+        maintainAspectRatio: false,
+        legend: {
+          position: 'right',
+          fullWidth: false
+        }
+      }
     };
   },
   mounted() {
     window.addEventListener('click', this.dashBoardClick)
     this.$contextMenu.EventBus.$on(paymentEvents.DELETE, this.deletePayment);
+    this.$contextMenu.EventBus.$on(paymentEvents.DELETE, this.updateChart);
     this.$contextMenu.EventBus.$on(paymentEvents.EDIT, this.openEditWindow);
     this.$contextMenu.EventBus.$on('show', this.contextMenuOpened);
     this.$contextMenu.EventBus.$on('hide', this.contextMenuClosed);
@@ -60,9 +78,38 @@ export default {
       }
       this.openAddWindow(settings);
     }
+    this.chartData = {
+      labels: [],
+      datasets: [{
+        label: 'My First Dataset',
+        data: [],
+        backgroundColor: [],
+        hoverOffset: 4
+      }],
+    }
+    const self = this;
+    this.loadAllPayments()
+        .then(() => {
+          return self.loadCategories()
+        })
+        .then(() => {
+          self.chartData.labels = self.getCategories;
+          for (const category of self.chartData.labels) {
+            const colors = [
+              self.getRandomInt(0, 255),
+              self.getRandomInt(0, 255),
+              self.getRandomInt(0, 255),
+            ];
+            const color = `rgb(${colors[0]},${colors[1]},${colors[2]})`;
+            self.chartData.datasets[0].backgroundColor.push(color);
+            self.chartData.datasets[0].data.push(self.getCategorySum(category));
+          }
+          self.$refs.chart.$data._chart.update();
+        });
   },
   destroyed() {
     this.$contextMenu.EventBus.$off(paymentEvents.DELETE, this.deletePayment);
+    this.$contextMenu.EventBus.$off(paymentEvents.DELETE, this.updateChart);
     this.$contextMenu.EventBus.$off(paymentEvents.EDIT, this.openEditWindow);
     this.$contextMenu.EventBus.$off('show', this.contextMenuOpened);
     this.$contextMenu.EventBus.$off('hide', this.contextMenuClosed);
@@ -76,7 +123,8 @@ export default {
   components: {
     PaymentsDisplay,
     CostButton,
-    Pagination
+    Pagination,
+    CircleChart
   },
   computed: {
     ...mapGetters({
@@ -84,7 +132,8 @@ export default {
       getCategories: 'categories/getCategoryList',
       amountOnPage: 'payments/getAmountOnPage',
       currentPage: 'payments/getCurrentPage',
-      getPayment: 'payments/getPayment'
+      getPayment: 'payments/getPayment',
+      getCategorySum: 'payments/getCategorySum'
     })
   },
   methods: {
@@ -93,7 +142,9 @@ export default {
       changePayment: 'payments/editPayment'
     }),
     ...mapActions({
-      deletePayment: 'payments/deletePayment'
+      deletePayment: 'payments/deletePayment',
+      loadCategories: 'categories/loadCategories',
+      loadAllPayments: 'payments/fetchAll'
     }),
     openAddWindow(settings) {
       this.$editCostWindow.show(settings);
@@ -114,6 +165,7 @@ export default {
     },
     editPayment(data) {
       this.changePayment(data);
+      this.updateChart();
       this.$editCostWindow.hide();
     },
     btnAddClick() {
@@ -144,8 +196,20 @@ export default {
     dashBoardClick(event) {
       this.hideContextMenu();
       this.hideModalWindow(event);
+    },
+    getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+    updateChart() {
+      this.chartData.labels = this.getCategories;
+      for (let i = 0; i < this.chartData.labels.length; i++) {
+        this.chartData.datasets[0].data[i] = this.getCategorySum(this.chartData.labels[i]);
+      }
+      this.$refs.chart.$data._chart.update();
     }
-  }
+  },
 }
 </script>
 

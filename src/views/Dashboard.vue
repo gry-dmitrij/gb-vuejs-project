@@ -58,6 +58,7 @@ export default {
   mounted() {
     window.addEventListener('click', this.dashBoardClick)
     this.$contextMenu.EventBus.$on(paymentEvents.DELETE, this.deletePayment);
+    this.$contextMenu.EventBus.$on(paymentEvents.DELETE, this.updateChart);
     this.$contextMenu.EventBus.$on(paymentEvents.EDIT, this.openEditWindow);
     this.$contextMenu.EventBus.$on('show', this.contextMenuOpened);
     this.$contextMenu.EventBus.$on('hide', this.contextMenuClosed);
@@ -108,6 +109,7 @@ export default {
   },
   destroyed() {
     this.$contextMenu.EventBus.$off(paymentEvents.DELETE, this.deletePayment);
+    this.$contextMenu.EventBus.$off(paymentEvents.DELETE, this.updateChart);
     this.$contextMenu.EventBus.$off(paymentEvents.EDIT, this.openEditWindow);
     this.$contextMenu.EventBus.$off('show', this.contextMenuOpened);
     this.$contextMenu.EventBus.$off('hide', this.contextMenuClosed);
@@ -163,6 +165,7 @@ export default {
     },
     editPayment(data) {
       this.changePayment(data);
+      this.updateChart();
       this.$editCostWindow.hide();
     },
     btnAddClick() {
@@ -198,6 +201,13 @@ export default {
       min = Math.ceil(min);
       max = Math.floor(max);
       return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+    updateChart() {
+      this.chartData.labels = this.getCategories;
+      for (let i = 0; i < this.chartData.labels.length; i++) {
+        this.chartData.datasets[0].data[i] = this.getCategorySum(this.chartData.labels[i]);
+      }
+      this.$refs.chart.$data._chart.update();
     }
   },
 }

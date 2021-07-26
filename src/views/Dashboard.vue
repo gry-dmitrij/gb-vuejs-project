@@ -18,8 +18,7 @@
         </main>
       </v-col>
       <v-col :cols="12" :md="6">
-        <CircleChart ref="chart" class="chart"
-                     :chart-data="chartData" :options="chartOptions"></CircleChart>
+        <CircleChart ref="chart" :chart-data="chartData" :options="chartOptions"></CircleChart>
       </v-col>
     </v-row>
   </v-container>
@@ -234,7 +233,4 @@ main{
 .button{
   align-self: flex-start;
 }
-//.chart {
-//  max-width: 40vw;
-//}
 </style>

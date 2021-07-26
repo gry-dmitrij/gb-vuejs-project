@@ -81,13 +81,6 @@ export default {
         },
         getPagesCount: state => Math.ceil(state.paymentsList.length / state.amountOnPage),
         getCurrentPage: state => state.currentPage,
-        // getCategorySum: state => category => {
-        //     let sum = 0;
-        //     state.paymentsList.forEach(item => {
-        //         sum += item.category === category ? item.value : 0;
-        //     })
-        //     return sum;
-        // }
         getCategorySum: state => category => state.paymentsList
             .reduce((sum, item) => item.category === category ? sum + item.value : sum, 0),
     },
@@ -137,33 +130,6 @@ export default {
             }
             dispatch('fetchData', state.currentPage);
         },
-        // loadData({commit, state }, { start, count }) {
-        //     return new Promise(resolve => {
-        //         setTimeout(() => {
-        //             const category = ['Food', 'Transport', 'Education', 'Sport'];
-        //             for (let i = start; i < start + count; i++) {
-        //                 if (i >= state.paymentsList.length) break;
-        //                 if (state.paymentsList[i]) {
-        //                     continue;
-        //                 }
-        //
-        //                 let day = getRandomIntInclusive(1, 31);
-        //                 let month = getRandomIntInclusive(0, 11);
-        //                 let year = getRandomIntInclusive(2000, 2021);
-        //                 commit('setPayment', {
-        //                     index: i,
-        //                     value: {
-        //                         value: getRandomIntInclusive(1, 1000),
-        //                         category: category[getRandomIntInclusive(0, category.length - 1)],
-        //                         date: parseDate(`${month}-${day}-${year}`)
-        //                     }
-        //                 });
-        //             }
-        //             resolve();
-        //         }, getRandomIntInclusive(700, 3000));
-        //     })
-        //
-        // },
         fetchData({ commit, state, getters }, page) {
             return new Promise((resolve, reject) => {
                 if (page > getters.getPagesCount) {
@@ -177,8 +143,8 @@ export default {
                     resolve(getters.getCurrentList);
                     return;
                 }
-                // return dispatch('loadData', { start, count });
                 return loadData({ commit, state }, {start, count})
+                    .then(() => resolve);
             });
         },
         fetchAll({ state, getters, commit }) {
@@ -189,7 +155,6 @@ export default {
                     resolve();
                     return;
                 }
-                //return dispatch('loadData', { start, count })
                 loadData({commit, state}, {start, count})
                     .then( () => {
                         resolve()

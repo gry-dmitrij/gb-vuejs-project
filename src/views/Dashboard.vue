@@ -70,29 +70,42 @@ export default {
       }
       this.openAddWindow(settings);
     }
-    this.chartData = {
-      labels: this.getCategories,
-      datasets: [{
-        label: 'My First Dataset',
-        data: [],
-        backgroundColor: [],
-        hoverOffset: 4
-      }]
-    };
+    // this.chartData = {
+    //   labels: this.getCategories,
+    //   datasets: [{
+    //     label: 'My First Dataset',
+    //     data: [],
+    //     backgroundColor: [],
+    //     hoverOffset: 4
+    //   }]
+    // };
     const self = this;
-    this.loadCategories()
-      .then(() => {
-        for (const category of self.chartData.labels) {
-          const colors = [
-            self.getRandomInt(0, 255),
-            self.getRandomInt(0, 255),
-            self.getRandomInt(0, 255),
-          ];
-          const color = `rgb(${colors[0]},${colors[1]},${colors[2]})`;
-          self.chartData.datasets[0].backgroundColor.push(color);
-          self.chartData.datasets[0].data.push(self.getCategorySum(category));
-        }
-      })
+    this.loadAllPayments()
+        .then(() => {
+          return self.loadCategories()
+        })
+        .then(() => {
+          const chartData = {
+            labels: self.getCategories,
+            datasets: [{
+              label: 'My First Dataset',
+              data: [],
+              backgroundColor: [],
+              hoverOffset: 4
+            }]
+          }
+          for (const category of chartData.labels) {
+            const colors = [
+              self.getRandomInt(0, 255),
+              self.getRandomInt(0, 255),
+              self.getRandomInt(0, 255),
+            ];
+            const color = `rgb(${colors[0]},${colors[1]},${colors[2]})`;
+            chartData.datasets[0].backgroundColor.push(color);
+            chartData.datasets[0].data.push(self.getCategorySum(category));
+          }
+          self.setChartData(chartData);
+        });
   },
   destroyed() {
     this.$contextMenu.EventBus.$off(paymentEvents.DELETE, this.deletePayment);
@@ -129,7 +142,8 @@ export default {
     }),
     ...mapActions({
       deletePayment: 'payments/deletePayment',
-      loadCategories: 'categories/loadCategories'
+      loadCategories: 'categories/loadCategories',
+      loadAllPayments: 'payments/fetchAll'
     }),
     openAddWindow(settings) {
       this.$editCostWindow.show(settings);
@@ -185,6 +199,9 @@ export default {
       min = Math.ceil(min);
       max = Math.floor(max);
       return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+    setChartData(chartData){
+      this.chartData = chartData;
     }
   },
 }

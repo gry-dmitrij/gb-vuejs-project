@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row>
-      <v-col>
+      <v-col :order="1" :order-md="0" :cols="12" :md="6">
         <header>
           <div class="title">My personal costs</div>
         </header>
@@ -17,8 +17,9 @@
           </div>
         </main>
       </v-col>
-      <v-col>
-        <CircleChart class="chart" :chart-data="chartData"></CircleChart>
+      <v-col :cols="12" :md="6">
+        <CircleChart ref="chart" class="chart"
+                     :chart-data="chartData" :options="chartOptions"></CircleChart>
       </v-col>
     </v-row>
   </v-container>
@@ -45,7 +46,14 @@ export default {
       buttonAction: null,
       hideContextMenu: () => null,
       hideModalWindow: () => null,
-      chartData: {}
+      chartData: {},
+      chartOptions: {
+        maintainAspectRatio: false,
+        legend: {
+          position: 'right',
+          fullWidth: false
+        }
+      }
     };
   },
   mounted() {
@@ -70,41 +78,33 @@ export default {
       }
       this.openAddWindow(settings);
     }
-    // this.chartData = {
-    //   labels: this.getCategories,
-    //   datasets: [{
-    //     label: 'My First Dataset',
-    //     data: [],
-    //     backgroundColor: [],
-    //     hoverOffset: 4
-    //   }]
-    // };
+    this.chartData = {
+      labels: [],
+      datasets: [{
+        label: 'My First Dataset',
+        data: [],
+        backgroundColor: [],
+        hoverOffset: 4
+      }],
+    }
     const self = this;
     this.loadAllPayments()
         .then(() => {
           return self.loadCategories()
         })
         .then(() => {
-          const chartData = {
-            labels: self.getCategories,
-            datasets: [{
-              label: 'My First Dataset',
-              data: [],
-              backgroundColor: [],
-              hoverOffset: 4
-            }]
-          }
-          for (const category of chartData.labels) {
+          self.chartData.labels = self.getCategories;
+          for (const category of self.chartData.labels) {
             const colors = [
               self.getRandomInt(0, 255),
               self.getRandomInt(0, 255),
               self.getRandomInt(0, 255),
             ];
             const color = `rgb(${colors[0]},${colors[1]},${colors[2]})`;
-            chartData.datasets[0].backgroundColor.push(color);
-            chartData.datasets[0].data.push(self.getCategorySum(category));
+            self.chartData.datasets[0].backgroundColor.push(color);
+            self.chartData.datasets[0].data.push(self.getCategorySum(category));
           }
-          self.setChartData(chartData);
+          self.$refs.chart.$data._chart.update();
         });
   },
   destroyed() {
@@ -199,9 +199,6 @@ export default {
       min = Math.ceil(min);
       max = Math.floor(max);
       return Math.floor(Math.random() * (max - min + 1)) + min;
-    },
-    setChartData(chartData){
-      this.chartData = chartData;
     }
   },
 }
@@ -237,7 +234,7 @@ main{
 .button{
   align-self: flex-start;
 }
-.chart {
-  max-width: 250px;
-}
+//.chart {
+//  max-width: 40vw;
+//}
 </style>

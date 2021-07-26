@@ -7,7 +7,6 @@ export default {
     },
     getters: {
         getCategoryList: state => state.categoryList,
-        loaded: state => state.loaded
     },
     mutations: {
         setCategories(state, categories) {

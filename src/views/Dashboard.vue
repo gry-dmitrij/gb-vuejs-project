@@ -17,6 +17,9 @@
           </div>
         </main>
       </v-col>
+      <v-col>
+        <CircleChart class="chart" :chart-data="chartData"></CircleChart>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -28,6 +31,7 @@ import Pagination from '../components/Pagination';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import { events as paymentEvents } from '../components/PaymentsDisplay';
 import { events as windowEvents } from '../plugins/EditCostWindow';
+import CircleChart from '../components/CircleChart';
 
 const EDIT_EVENT = 'edit-event';
 const ADD_EVENT = 'add-event';
@@ -40,7 +44,8 @@ export default {
       showPaymentForm: false,
       buttonAction: null,
       hideContextMenu: () => null,
-      hideModalWindow: () => null
+      hideModalWindow: () => null,
+      chartData: {}
     };
   },
   mounted() {
@@ -65,6 +70,29 @@ export default {
       }
       this.openAddWindow(settings);
     }
+    this.chartData = {
+      labels: this.getCategories,
+      datasets: [{
+        label: 'My First Dataset',
+        data: [],
+        backgroundColor: [],
+        hoverOffset: 4
+      }]
+    };
+    const self = this;
+    this.loadCategories()
+      .then(() => {
+        for (const category of self.chartData.labels) {
+          const colors = [
+            self.getRandomInt(0, 255),
+            self.getRandomInt(0, 255),
+            self.getRandomInt(0, 255),
+          ];
+          const color = `rgb(${colors[0]},${colors[1]},${colors[2]})`;
+          self.chartData.datasets[0].backgroundColor.push(color);
+          self.chartData.datasets[0].data.push(self.getCategorySum(category));
+        }
+      })
   },
   destroyed() {
     this.$contextMenu.EventBus.$off(paymentEvents.DELETE, this.deletePayment);
@@ -81,7 +109,8 @@ export default {
   components: {
     PaymentsDisplay,
     CostButton,
-    Pagination
+    Pagination,
+    CircleChart
   },
   computed: {
     ...mapGetters({
@@ -89,7 +118,8 @@ export default {
       getCategories: 'categories/getCategoryList',
       amountOnPage: 'payments/getAmountOnPage',
       currentPage: 'payments/getCurrentPage',
-      getPayment: 'payments/getPayment'
+      getPayment: 'payments/getPayment',
+      getCategorySum: 'payments/getCategorySum'
     })
   },
   methods: {
@@ -98,7 +128,8 @@ export default {
       changePayment: 'payments/editPayment'
     }),
     ...mapActions({
-      deletePayment: 'payments/deletePayment'
+      deletePayment: 'payments/deletePayment',
+      loadCategories: 'categories/loadCategories'
     }),
     openAddWindow(settings) {
       this.$editCostWindow.show(settings);
@@ -149,8 +180,13 @@ export default {
     dashBoardClick(event) {
       this.hideContextMenu();
       this.hideModalWindow(event);
+    },
+    getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-  }
+  },
 }
 </script>
 
@@ -183,5 +219,8 @@ main{
 }
 .button{
   align-self: flex-start;
+}
+.chart {
+  max-width: 250px;
 }
 </style>

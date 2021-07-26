@@ -36,7 +36,19 @@ export default {
             return state.paymentsList.slice(start, start + state.amountOnPage);
         },
         getPagesCount: state => Math.ceil(state.paymentsList.length / state.amountOnPage),
-        getCurrentPage: state => state.currentPage
+        getCurrentPage: state => state.currentPage,
+        getCategorySum: state => category => {
+            debugger;
+            let sum = 0;
+            state.paymentsList.forEach(item => {
+                sum += item.category === category ? item.value : 0;
+            })
+            // let result = state.paymentsList.reduce((acc, item) => {
+            //         debugger;
+            //         return item.category === category ? acc + item.value : acc
+            //     }, 0);
+            return sum;
+        }
     },
     mutations: {
         setPaymentsList(state, { page, list}) {

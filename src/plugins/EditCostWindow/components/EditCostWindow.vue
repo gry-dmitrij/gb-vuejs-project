@@ -1,9 +1,8 @@
 <template>
   <div class="wrapper"  v-if="showed">
-    <input type="text" placeholder="Amount" v-model="value">
-    <select name="categories" v-model="category">
-      <option v-for="(category, idx) in categories" :key="idx" :value="category">{{ category }}</option>
-    </select>
+    <v-text-field solo placeholder="Amount" v-model="value"/>
+    <v-select :items="categories" attach=".wrapper" solo
+      v-model="category"></v-select>
     <input type="date" placeholder="Date" v-model="date">
     <CostButton class="button" @click="onClick">{{ buttonName }}</CostButton>
   </div>
@@ -32,7 +31,8 @@ export default {
       showed: false,
       buttonName: '',
       event: null,
-      index: null
+      index: null,
+      dateMenu: false
     }
   },
   mounted() {
@@ -79,6 +79,7 @@ export default {
     },
     hide() {
       this.showed = false;
+      this.dateMenu = false;
       this.clearData();
     },
     clearData() {

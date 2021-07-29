@@ -229,7 +229,7 @@ header{
   position: absolute;
   top: 20px;
   left: 100px;
-
+  z-index: 1;
 }
 .title{
   font-size: 20px;

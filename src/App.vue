@@ -1,68 +1,40 @@
 <template>
-  <div id="app" class="wrapper" >
-    <router-link class="menu-link" to="/dashboard">Dashboard</router-link>
-    <router-link class="menu-link" to="/about">About</router-link>
-    <router-view></router-view>
-  </div>
+  <v-app>
+    <v-app-bar app flat>
+      <v-btn plain :ripple="false" to="/dashboard">Dashboard</v-btn>
+      <v-btn plain :ripple="false" to="/about">About</v-btn>
+    </v-app-bar>
+
+    <v-main>
+      <router-view/>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-// import PaymentsDisplay from './components/PaymentsDisplay.vue';
-// import AddPaymentForm from './components/AddPaymentForm';
-// import CostButton from './components/CostButton';
-// import Pagination from './components/Pagination';
-import { mapActions } from 'vuex';
+
+import {mapActions} from "vuex";
 
 export default {
   name: 'App',
-  data() {
-    return {
-      // paymentsList: [],
-      // showPaymentForm: false
-    };
-  },
-  components: {
-    // PaymentsDisplay,
-    // AddPaymentForm,
-    // CostButton,
-    // Pagination
-  },
+
+  data: () => ({
+    //
+  }),
   created() {
     this.loadData(0);
     this.loadCategories();
   },
-  // computed: {
-  //   ...mapGetters({
-  //     currentList: 'payments/getCurrentList',
-  //     getCategories: 'categories/getCategoryList',
-  //     amountOnPage: 'payments/getAmountOnPage',
-  //     currentPage: 'payments/getCurrentPage'
-  //   })
-  // },
   methods: {
-    // ...mapMutations({
-    //   addNewPayment: 'payments/addPayment'
-    // }),
     ...mapActions({
       loadData: 'payments/fetchData',
       loadCategories: 'categories/loadCategories'
     }),
 
   }
-}
+};
 </script>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 20px;
-}
-.menu-link {
-  margin-right: 20px;
 
-}
 </style>
